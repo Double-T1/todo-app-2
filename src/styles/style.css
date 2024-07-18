@@ -304,3 +304,7 @@ section#userSection {
     @apply w-full pt-4 pb-8;
   }
 }
+
+.line-through {
+  text-decoration: line-through;
+}

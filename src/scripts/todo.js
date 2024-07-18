@@ -1,6 +1,7 @@
 // 程式碼寫在這裡
 import Alpine from "alpinejs";
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
 
 const SERVER = "https://todoo.5xcamp.us";
 const HEADERS = {
@@ -145,11 +146,19 @@ Alpine.data("taskInput", () => ({
 
 Alpine.data("todoList", () => ({
   showList: true,
-  tasks: [],
+  tasks: [{text: "hehe", id: 1}],
+  checked: false,
 
   handleAddTask({detail}) {
-    this.tasks.unshift(detail.text);
-    console.log(this.tasks[0]);
+    this.tasks.unshift({text: detail.text, id: this.generateId()});
+  },
+  generateId() {
+    return uuidv4();
+  },
+  closeTask(id) {
+    this.tasks = this.tasks.filter(ele => {
+      return ele.id != id;
+    })
   }
 }))
 

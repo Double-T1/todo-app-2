@@ -84,7 +84,7 @@
               </div>
 
               <div class="items-center justify-between block sm:flex field">
-                <button @click="login">登入</button>
+                <button @click.prevent="login">登入</button>
                 <div class="text-xl text-gray-600">
                   還沒有帳號嗎？<a href="#" @click.prevent="showSignUp" class="text-link signUpLink">註冊</a
                   >一個吧！
@@ -167,23 +167,23 @@
               spellcheck="false"
               placeholder="做點重要的事吧..."
             />
-            <button id="addTodoBtn" @click="addTask">新增</button>
+            <button id="addTodoBtn" @click.prevent="addTask">新增</button>
           </form>
         </section>
       </template>
       <!-- TODO Section end -->
     </main>
     
-    <template x-data="todoList" x-if="showList" @new-task.window="handleAddTask">
+    <template x-data="todoList" x-if="showList">
       <section class="todo-list" x-data="todoList">
         <ul class="items">
           <!-- item start -->
-          <template x-for="task in tasks"> 
+          <template x-for="t in tasks" @new-task.window="handleAddTask"> 
             <li>
               <div class="item-content">
                 <label>
-                  <input type="checkbox" />
-                  <p class="content">我要學 Ruby on Rails</p>
+                  <input type="checkbox" x-model="checked"/>
+                  <p :class="checked ? 'content line-through' : 'content'" x-text="t.text"></p>
                 </label>
               </div>
               <div class="item-control">
@@ -191,7 +191,7 @@
                   ><img class="icon" src="assets/pen-to-square-solid.svg"
                 /></a>
                 <a href="#" class="delete"
-                  ><img class="icon" src="assets/trash-can-solid.svg"
+                  ><img @click="(() => {closeTask(t.id)})" class="icon" src="assets/trash-can-solid.svg"
                 /></a>
               </div>
             </li>
@@ -200,7 +200,7 @@
         </ul>
       </section>
     </template>
-    
+
     <footer>
       <p>
         powered by
