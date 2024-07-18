@@ -182,8 +182,8 @@
             <li>
               <div class="item-content">
                 <label>
-                  <input type="checkbox" x-model="checked"/>
-                  <p :class="checked ? 'content line-through' : 'content'" x-text="t.text"></p>
+                  <input type="checkbox" x-model="t.checked"/>
+                  <p :class="t.checked ? 'content line-through' : 'content'" x-text="t.content"></p>
                 </label>
               </div>
               <div class="item-control">

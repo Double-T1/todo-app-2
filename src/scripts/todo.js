@@ -1,7 +1,6 @@
 // 程式碼寫在這裡
 import Alpine from "alpinejs";
 import axios from "axios";
-import { v4 as uuidv4 } from 'uuid';
 
 const SERVER = "https://todoo.5xcamp.us";
 const HEADERS = {
@@ -57,8 +56,7 @@ Alpine.data("user", () => ({
         const res = await axios.get(`${SERVER}/todos`,HEADERS);
         this.showInput();
       } catch (err) {
-        console.log(err);
-        // this.$dispatch("notice", {message: "can't login", type: "error"});
+        this.$dispatch("notice", {message: "can't login", type: "error"});
       }
     }
   },
@@ -146,19 +144,46 @@ Alpine.data("taskInput", () => ({
 
 Alpine.data("todoList", () => ({
   showList: true,
-  tasks: [{text: "hehe", id: 1}],
-  checked: false,
+  tasks: [],
 
+  async init() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      HEADERS.headers.Authorization = token;
+      const x = await axios.get(`${SERVER}/todos`,HEADERS);
+      this.tasks = x.data.todos.map(todo => {
+        todo.checked = false;
+        return todo;
+      });
+    }
+  },
   handleAddTask({detail}) {
-    this.tasks.unshift({text: detail.text, id: this.generateId()});
+    const text = detail.text;
+    const param = {
+      todo: {
+        content: text
+      }
+    }
+    HEADERS.headers.Authorization = localStorage.getItem('token');
+    axios.post(`${SERVER}/todos`,param,HEADERS) 
+      .then(({data}) => {
+        data.checked = false;
+        this.tasks.unshift(data);
+      }).catch(err => {
+        this.$dispatch("notice", {message: "can't add todo", type: "error"});
+      })
   },
-  generateId() {
-    return uuidv4();
-  },
-  closeTask(id) {
+  async closeTask(id) {
     this.tasks = this.tasks.filter(ele => {
       return ele.id != id;
     })
+    
+    HEADERS.headers.authorization = localStorage.getItem('token');
+    try {
+      await axios.delete(`${SERVER}/todos/${id}`,HEADERS);
+    } catch (err) {
+      this.$dispatch("notice",{message: "can't delete", type: "error"});
+    }
   }
 }))
 
