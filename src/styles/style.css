@@ -308,3 +308,14 @@ section#userSection {
 .line-through {
   text-decoration: line-through;
 }
+
+.editable {
+  border: none;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+  width: auto;
+  cursor: text;
+}

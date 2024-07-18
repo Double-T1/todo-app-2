@@ -137,14 +137,15 @@ Alpine.data("taskInput", () => ({
   },
   addTask() {
     if (this.inputText.trim().length > 1) {
-      this.$dispatch("new-task",{text: this.inputText.trim()});
+      this.$dispatch("new-task",{content: this.inputText.trim()});
     }
   }
 }))
 
 Alpine.data("todoList", () => ({
   showList: true,
-  tasks: [],
+  tasks: [], 
+  // {content, id, checked, editing}
 
   async init() {
     const token = localStorage.getItem('token');
@@ -153,21 +154,23 @@ Alpine.data("todoList", () => ({
       const x = await axios.get(`${SERVER}/todos`,HEADERS);
       this.tasks = x.data.todos.map(todo => {
         todo.checked = false;
+        todo.editing = false;
         return todo;
       });
     }
   },
   handleAddTask({detail}) {
-    const text = detail.text;
+    const content = detail.content;
     const param = {
       todo: {
-        content: text
+        content: content
       }
     }
     HEADERS.headers.Authorization = localStorage.getItem('token');
     axios.post(`${SERVER}/todos`,param,HEADERS) 
       .then(({data}) => {
         data.checked = false;
+        data.editing = false;
         this.tasks.unshift(data);
       }).catch(err => {
         this.$dispatch("notice", {message: "can't add todo", type: "error"});

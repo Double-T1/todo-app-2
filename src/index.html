@@ -183,7 +183,7 @@
               <div class="item-content">
                 <label>
                   <input type="checkbox" x-model="t.checked"/>
-                  <p :class="t.checked ? 'content line-through' : 'content'" x-text="t.content"></p>
+                  <input type="text" :class="t.checked ? 'editable content line-through' : 'content editable'" x-bind:readonly="!t.editing" x-model="t.content"/>
                 </label>
               </div>
               <div class="item-control">
