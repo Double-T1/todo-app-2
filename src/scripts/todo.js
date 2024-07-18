@@ -187,6 +187,25 @@ Alpine.data("todoList", () => ({
     } catch (err) {
       this.$dispatch("notice",{message: "can't delete", type: "error"});
     }
+  },
+  async editTask(id) {
+    for (ele of this.tasks) {
+      if (ele.id === id) {
+        ele.editing = !ele.editing;
+        if (!ele.editing) {
+          try {
+            const params = {
+              "todo": {
+                "content": ele.content
+              }
+            };
+            await axios.put(`${SERVER}/todos/${ele.id}`,params,HEADERS);
+          } catch (err) {
+            this.$dispatch("notice", {message: "updated failure", type: "error"});
+          }
+        }
+      }
+    } 
   }
 }))
 

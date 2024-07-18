@@ -183,15 +183,15 @@
               <div class="item-content">
                 <label>
                   <input type="checkbox" x-model="t.checked"/>
-                  <input type="text" :class="t.checked ? 'editable content line-through' : 'content editable'" x-bind:readonly="!t.editing" x-model="t.content"/>
+                  <input type="text" :class="t.checked ? 'editable content line-through' : 'content editable'" x-bind:disabled="!t.editing" x-model="t.content"/>
                 </label>
               </div>
               <div class="item-control">
                 <a href="#" class="edit"
-                  ><img class="icon" src="assets/pen-to-square-solid.svg"
+                  ><img @click="() => {editTask(t.id)}" class="icon" src="assets/pen-to-square-solid.svg"
                 /></a>
                 <a href="#" class="delete"
-                  ><img @click="(() => {closeTask(t.id)})" class="icon" src="assets/trash-can-solid.svg"
+                  ><img @click="() => {closeTask(t.id)}" class="icon" src="assets/trash-can-solid.svg"
                 /></a>
               </div>
             </li>
