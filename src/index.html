@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TODO App</title>
     <link rel="stylesheet" href="styles/style.css" />
-    <script src="scripts/todo.js" defer type="module"></script>
+    <script src="scripts/todo.js" type="module"></script>
   </head>
 
   <body class="container px-2 py-4 mx-auto">
@@ -36,260 +36,171 @@
 
     <main class="px-6 todo-app main">
       <header>
-        <nav class="navbar">
-          <a class="loginLink" href="#login">登入</a>
-          <a class="signUpLink" href="#sign_up">註冊</a>
+        <nav class="navbar" x-data="navBar"> 
+          <a class="loginLink" href="#login" @click="showLogin">登入</a>
+          <a class="signUpLink" href="#sign_up" @click="showSignUp">註冊</a>
         </nav>
       </header>
 
-      <section id="userSection">
+      <template x-data="flashMessage" @notice.window="handleNotice" x-if="showFlash">
+        <div :class="`flash-area px-4 py-4 ${bgColor} flex justify-between`">
+          <div class="flash-message" x-text="content"></div>
+          <button @click="closeFlash">X</button>
+        </div>
+      </template>
+
+      <section id="userSection" x-data="user" @from-nav.window="handleChange">
         <!-- Login Section start -->
-        <section id="loginSection">
-          <h1>登入</h1>
-          <form id="loginForm">
-            <div class="field">
-              <label>
-                <h3>Email</h3>
-                <input
-                  type="email"
-                  id="loginEmail"
-                  autocomplete="off"
-                  spellcheck="false"
-                  placeholder="Email 信箱"
-                />
-              </label>
-            </div>
-
-            <div class="field">
-              <label>
-                <h3>密碼</h3>
-                <input
-                  type="password"
-                  id="loginPassword"
-                  autocomplete="off"
-                  spellcheck="false"
-                  placeholder="密碼，至少需要 6 個字"
-                />
-              </label>
-            </div>
-
-            <div class="items-center justify-between block sm:flex field">
-              <button>登入</button>
-              <div class="text-xl text-gray-600">
-                還沒有帳號嗎？<a href="#" class="text-link signUpLink">註冊</a
-                >一個吧！
+        <template x-if="status === 'login'">
+          <section id="loginSection">
+            <h1>登入</h1>
+            <form id="loginForm">
+              <div class="field">
+                <label>
+                  <h3>Email</h3>
+                  <input
+                    x-model="email"
+                    type="email"
+                    id="loginEmail"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="Email 信箱"
+                  />
+                </label>
               </div>
-            </div>
-          </form>
-        </section>
+
+              <div class="field">
+                <label>
+                  <h3>密碼</h3>
+                  <input
+                    x-model="password"
+                    type="password"
+                    id="loginPassword"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="密碼，至少需要 6 個字"
+                  />
+                </label>
+              </div>
+
+              <div class="items-center justify-between block sm:flex field">
+                <button @click="login">登入</button>
+                <div class="text-xl text-gray-600">
+                  還沒有帳號嗎？<a href="#" @click.prevent="showSignUp" class="text-link signUpLink">註冊</a
+                  >一個吧！
+                </div>
+              </div>
+            </form>
+          </section>
+        </template>
         <!-- Login Section end -->
 
         <!-- Sign Up Section start -->
-        <section id="signUpSection">
-          <h1>註冊帳號</h1>
-          <form id="signUpForm">
-            <div class="field">
-              <label>
-                <h3>Email</h3>
-                <input
-                  type="email"
-                  id="signUpEmail"
-                  autocomplete="off"
-                  spellcheck="false"
-                  placeholder="Email 信箱"
-                />
-              </label>
-            </div>
-
-            <div class="field">
-              <label>
-                <h3>暱稱</h3>
-                <input
-                  type="text"
-                  id="signUpNickname"
-                  autocomplete="off"
-                  spellcheck="false"
-                  placeholder="要怎麼稱呼你呢？"
-                />
-              </label>
-            </div>
-
-            <div class="field">
-              <label>
-                <h3>密碼</h3>
-                <input
-                  type="password"
-                  id="signUpPassword"
-                  autocomplete="off"
-                  spellcheck="false"
-                  placeholder="密碼，至少需要 6 個字"
-                />
-              </label>
-            </div>
-
-            <div class="items-center justify-between block sm:flex field">
-              <button>註冊</button>
-              <div class="text-xl text-gray-600">
-                已經有帳號了？<a href="#" class="text-link loginLink">登入</a>
+        <template x-if="status === 'signUp'">
+          <section id="signUpSection">
+            <h1>註冊帳號</h1>
+            <form id="signUpForm">
+              <div class="field">
+                <label>
+                  <h3>Email</h3>
+                  <input
+                    x-model="email"
+                    type="email"
+                    id="signUpEmail"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="Email 信箱"
+                  />
+                </label>
               </div>
-            </div>
+
+              <div class="field">
+                <label>
+                  <h3>暱稱</h3>
+                  <input
+                    x-model="nickname"
+                    type="text"
+                    id="signUpNickname"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="要怎麼稱呼你呢？"
+                  />
+                </label>
+              </div>
+
+              <div class="field">
+                <label>
+                  <h3>密碼</h3>
+                  <input
+                    x-model="password"
+                    type="password"
+                    id="signUpPassword"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="密碼，至少需要 6 個字"
+                  />
+                </label>
+              </div>
+
+              <div class="items-center justify-between block sm:flex field">
+                <button @click="signUp">註冊</button>
+                <div class="text-xl text-gray-600">
+                  已經有帳號了？<a @click.prevent="showLogin" href="#" class="text-link loginLink">登入</a>
+                </div>
+              </div>
+            </form>
+          </section>
+        </template>
+        <!-- Sign Up Section end -->
+
+      </section>
+      
+      <!-- TODO Section start -->
+      <template x-data="taskInput" x-if="showInput" @show-input.window="handleShow">
+        <section id="taskSection">
+          <form id="todoForm">
+            <input
+              x-model="inputText"
+              type="text"
+              id="taskInput"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="做點重要的事吧..."
+            />
+            <button id="addTodoBtn" @click="addTask">新增</button>
           </form>
         </section>
-        <!-- Sign Up Section end -->
-      </section>
-
-      <!-- TODO Section start -->
-      <section id="taskSection">
-        <form id="todoForm">
-          <input
-            type="text"
-            id="taskInput"
-            autocomplete="off"
-            spellcheck="false"
-            placeholder="做點重要的事吧..."
-          />
-          <button id="addTodoBtn">新增</button>
-        </form>
-      </section>
+      </template>
       <!-- TODO Section end -->
     </main>
-
-    <section class="todo-list">
-      <ul class="items">
-        <!-- item start -->
-        <li>
-          <div class="item-content">
-            <label>
-              <input type="checkbox" />
-              <p class="content">我要學 Ruby on Rails</p>
-            </label>
-          </div>
-          <div class="item-control">
-            <a href="#" class="edit"
-              ><img class="icon" src="assets/pen-to-square-solid.svg"
-            /></a>
-            <a href="#" class="delete"
-              ><img class="icon" src="assets/trash-can-solid.svg"
-            /></a>
-          </div>
-        </li>
-        <!-- item end -->
-
-        <!-- item start -->
-        <li class="completed">
-          <div class="item-content">
-            <label>
-              <input type="checkbox" checked />
-              <p class="content">我要學 Git</p>
-            </label>
-          </div>
-          <div class="item-control">
-            <a href="#" class="edit"
-              ><img class="icon" src="assets/pen-to-square-solid.svg"
-            /></a>
-            <a href="#" class="delete"
-              ><img class="icon" src="assets/trash-can-solid.svg"
-            /></a>
-          </div>
-        </li>
-        <!-- item end -->
-
-        <!-- item start -->
-        <li>
-          <div class="item-content">
-            <label>
-              <input type="checkbox" />
-              <p class="content">我要學 JavaScript</p>
-            </label>
-          </div>
-          <div class="item-control">
-            <a href="#" class="edit"
-              ><img class="icon" src="assets/pen-to-square-solid.svg"
-            /></a>
-            <a href="#" class="delete"
-              ><img class="icon" src="assets/trash-can-solid.svg"
-            /></a>
-          </div>
-        </li>
-        <!-- item end -->
-
-        <!-- item start -->
-        <li>
-          <div class="item-content">
-            <label>
-              <input type="checkbox" />
-              <p class="content">我要學區塊鏈</p>
-            </label>
-          </div>
-          <div class="item-control">
-            <a href="#" class="edit"
-              ><img class="icon" src="assets/pen-to-square-solid.svg"
-            /></a>
-            <a href="#" class="delete"
-              ><img class="icon" src="assets/trash-can-solid.svg"
-            /></a>
-          </div>
-        </li>
-        <!-- item end -->
-
-        <!-- item start -->
-        <li>
-          <div class="item-content">
-            <label>
-              <input type="checkbox" />
-              <p class="content">我要學 React</p>
-            </label>
-          </div>
-          <div class="item-control">
-            <a href="#" class="edit"
-              ><img class="icon" src="assets/pen-to-square-solid.svg"
-            /></a>
-            <a href="#" class="delete"
-              ><img class="icon" src="assets/trash-can-solid.svg"
-            /></a>
-          </div>
-        </li>
-        <!-- item end -->
-
-        <!-- item start -->
-        <li>
-          <div class="item-content">
-            <label>
-              <input type="checkbox" />
-              <p class="content">我要學 Vue</p>
-            </label>
-          </div>
-          <div class="item-control">
-            <a href="#" class="edit"
-              ><img class="icon" src="assets/pen-to-square-solid.svg"
-            /></a>
-            <a href="#" class="delete"
-              ><img class="icon" src="assets/trash-can-solid.svg"
-            /></a>
-          </div>
-        </li>
-        <!-- item end -->
-
-        <!-- item start -->
-        <li class="completed">
-          <div class="item-content">
-            <label>
-              <input type="checkbox" checked />
-              <p class="content">我要發大財</p>
-            </label>
-          </div>
-          <div class="item-control">
-            <a href="#" class="edit"
-              ><img class="icon" src="assets/pen-to-square-solid.svg"
-            /></a>
-            <a href="#" class="delete"
-              ><img class="icon" src="assets/trash-can-solid.svg"
-            /></a>
-          </div>
-        </li>
-        <!-- item end -->
-      </ul>
-    </section>
+    
+    <template x-data="todoList" x-if="showList" @new-task.window="handleAddTask">
+      <section class="todo-list" x-data="todoList">
+        <ul class="items">
+          <!-- item start -->
+          <template x-for="task in tasks"> 
+            <li>
+              <div class="item-content">
+                <label>
+                  <input type="checkbox" />
+                  <p class="content">我要學 Ruby on Rails</p>
+                </label>
+              </div>
+              <div class="item-control">
+                <a href="#" class="edit"
+                  ><img class="icon" src="assets/pen-to-square-solid.svg"
+                /></a>
+                <a href="#" class="delete"
+                  ><img class="icon" src="assets/trash-can-solid.svg"
+                /></a>
+              </div>
+            </li>
+          </template>
+          <!-- item end -->
+        </ul>
+      </section>
+    </template>
+    
     <footer>
       <p>
         powered by
